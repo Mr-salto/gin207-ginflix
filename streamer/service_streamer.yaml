@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:  
+  name: streamer
+  labels:
+    app: streamer
+  namespace: ginflix
+spec:
+  selector:
+    run: streamer
+  type: LoadBalancer
+  ports:  
+  - name: streamer
+    port: 30002 ## port sur lequel le service écoute
+    targetPort: 80 ## port sur lequel il envoie les requêtes
+    protocol: TCP

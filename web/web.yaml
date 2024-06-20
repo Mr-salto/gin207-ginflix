@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: web
+  name: web
+  namespace: ginflix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: web
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        run: web
+    spec:
+      containers:
+        - name: web
+          image: docker.io/gintelecom/ginflix
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DB_HOST
+              value: "db"
+            - name: DB_NAME
+              value: "ginflix"
+            - name: DB_PASSWORD
+              value: "tonic"
+            - name: DB_USER
+              value: "gin"
+            - name: DJANGO_SUPERUSER_EMAIL
+              value: "admin@ginflix.com"
+            - name: DJANGO_SUPERUSER_PASSWORD
+              value: "admin"
+            - name: GUNICORN_ENABLE
+              value: "false"
+            - name: SECRET_KEY
+              value: "secret"
+            - name: ALLOWED_HOST
+              value: "137.194.210.186"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: db-data-ginflix
+      volumes:
+        - name: db-data-ginflix
+          persistentVolumeClaim:
+            claimName: db-data-ginflix

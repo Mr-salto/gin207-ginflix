@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: db
+  name: db
+  namespace: ginflix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        run: db
+    spec:
+      containers:
+        - name: db
+          image: postgres:latest
+          ports:
+          - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "ginflix"
+            - name: POSTGRES_PASSWORD
+              value: "tonic"
+            - name: POSTGRES_USER
+              value: "gin"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: db-data
+      restartPolicy: Always
+      volumes:
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: db-data-ginflix
